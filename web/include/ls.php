@@ -156,153 +156,6 @@ class ls
         $subnest_covid = ($data->Children("ns8", TRUE)->Order->Children("ns2", TRUE)->OrderLine);
         $subnest_order4 =        ($data->Children("ns4", TRUE)->Order->Children("ns3", TRUE)->OrderLine);
 
-
-        if (get_object_vars($subnest) <> false || count($subnest) <> 0) {
-            $row = "";
-            $row = "TES";
-            try {
-                $dt1 =     strtotime($data->Order->Children("cbc", TRUE)->IssueDate);
-                $dt = date("d/m/Y", $dt1);
-
-                $row = $row . $sep . $dt . $sep . $ind . $sep . $data->Order->Children("cac", TRUE)
-                    ->BuyerCustomerParty->Children("cac", TRUE)->Party
-                    ->Children("cac", TRUE)->PartyTaxScheme->Children("cbc", TRUE)->CompanyID;
-                $row = $row . $sep   . $dt;
-                $row = $row .   $sep . $data->Order->Children("cbc", TRUE)->ID .$sep.$sep.$sep.$sep;
-                $row = $row .$sep.'"[CedentePrestatore|RiferimentoAmministrazione|'.
-                $data->Order->children("cac",true)->BuyerCustomerParty->children("cac", TRUE)->Party->
-                children("cbc",true)->EndpointID."]".$sep;
-                $row = $row . '[DatiOrdineAcquisto|Data|'.$dt.']'.$sep;
-                $row = $row .'[DatiOrdineAcquisto|IdDocumento|'.   $data->Order->Children("cbc", TRUE)->ID  ; 
-                $row = $row .']"'.$sep; 
-                $row = $row .  str_replace("CIG:", "",$data->Order->Children('cac',TRUE)->
-                OriginatorDocumentReference->children('cbc',true)->ID);
-                $row = $row .$sep. PHP_EOL;
-                foreach ($data->Order->Children("cac", TRUE)->OrderLine as $line) {
-                    $row = $row . "RIG" . $sep   . $dt .$sep.$ind.$sep.$sep.$sep.$sep;
-                    $row = $row . $line->Children("cac", true)->LineItem->children("cac", true)->Item->
-                    children("cac", true)->BuyersItemIdentification->children("cbc", true)->ID . $sep.$sep;
-                    $row = $row . $line->Children("cac", true)->LineItem->children("cbc", true)->Quantity;
-                    $row = $row . $sep . 
-                    $this->withoutRounding($line->Children("cac", true)->LineItem->children("cac", true)
-                    ->Price->children("cbc", true)->PriceAmount,3) .$sep.$sep;
-                    $row=$row.$line->Note.$sep.
-                        PHP_EOL;
-                }
-            } catch (Exception $var) {
-                print $var->getMessage();
-            }
-            $di = str_replace('include', '', $directory->getPath());
-            $xml = $di . $ini_array['percorsi']['toelab'] . (basename($f));
-            copy($xml, $di . $ini_array['percorsi']['procfiles'] . (basename($f)));
-            //echo $xml;
-            unlink($xml);
-            return $row;
-        } elseif (get_object_vars($subnest_covid) <> false || count($subnest_covid) <> 0) {
-            //   echo '<tr><td> Ordine covid</tr></td>';
-            $tmp_xml = file_get_contents($file); //fread(fopen($file,"r"),$file);
-            // var_dump($testo);
-            $tmp_file = fopen("_" . basename($file), "w");
-            fwrite($tmp_file, $tmp_xml);
-            $tmp_xml = str_replace("ns8:", "", $tmp_xml);
-            $tmp_xml = str_replace("ns2:", "", $tmp_xml);
-            $tmp_file = fopen("_" . basename($file), "w");
-            fwrite($tmp_file, $tmp_xml);
-            $data =  new SimpleXmlElement("_" . basename($file), null, true);
-            try {
-                $row = "";
-                $row = "TES";
-                $dt1 =     strtotime($data->Order->IssueDate);
-                $dt = date("d/m/Y", $dt1);
-
-                $row = $row . $sep . $dt . $sep . $ind . $sep . $data->Order->BuyerCustomerParty->Party
-                    ->PartyTaxScheme->CompanyID;
-                $row = $row . $sep   . $dt;
-                $row = $row .   $sep . $data->Order->ID . $sep.$sep.$sep.$sep ;//. PHP_EOL;
-                $row = $row .$sep.'"[CedentePrestatore|RiferimentoAmministrazione|'.
-                $data->Order->BuyerCustomerParty->Party->EndpointID."]".$sep;
-                $row = $row . '[DatiOrdineAcquisto|Data|'.$dt.']'.$sep;
-                $row = $row .'[DatiOrdineAcquisto|IdDocumento|'.   $data->Order->ID ; 
-                $row = $row .']"'.$sep; 
-                $row = $row . str_replace("CIG:", "",$data->Order->OriginatorDocumentReference->ID).$sep;
-                $row = $row . PHP_EOL;
-
-
-                //   echo '<tr><td>' . $row . '</tr></td>';
-                foreach ($data->Order->OrderLine as $line) {
-
-                    $row = $row . "RIG" . "$sep"   . $dt . $sep.$ind.$sep.$sep.$sep.$sep;
-                    $row = $row . $line->LineItem->Item->SellersItemIdentification->ID . $sep.$sep;
-                    $row = $row . $line->LineItem->Quantity;
-                    $row = $row . $sep . $this->withoutRounding($line->LineItem->Price->PriceAmount,3) . $sep.$sep;
-                    $row=$row.$line->Note               .$sep. PHP_EOL;
-                }
-
-
-
-                $di = str_replace('include', '', $directory->getPath());
-                $xml = $di . $ini_array['percorsi']['toelab'] . (basename($f));
-                copy($xml, $di . $ini_array['percorsi']['procfiles'] . (basename($f)));
-                //     echo $row;
-                unlink($xml);
-                unlink("_" . basename($file));
-                return $row;
-            } catch (Exception $var) {
-                print $var->getMessage();
-            }
-        } elseif ( //get_object_vars($subnest_order4) <> false || count($subnest_order4) <> 0 && 
-            1 == 2
-        ) {
-            $tmp_xml = file_get_contents($file); //fread(fopen($file,"r"),$file);
-            // var_dump($testo);
-            $tmp_file = fopen("_" . basename($file), "w");
-            fwrite($tmp_file, $tmp_xml);
-            $tmp_xml = str_replace("ns4:", "", $tmp_xml);
-            $tmp_xml = str_replace("ns3:", "", $tmp_xml);
-            $tmp_file = fopen("_" . basename($file), "w");
-            fwrite($tmp_file, $tmp_xml);
-            $data =  new SimpleXmlElement("_" . basename($file), null, true);
-            try {
-                $row = "";
-                $row = "TES";
-                $dt1 =     strtotime($data->Order->IssueDate);
-                $dt = date("d/m/Y", $dt1);
-
-                $row = $row . $sep . $dt . $sep . $ind . $sep . $data->Order->BuyerCustomerParty->Party
-                    ->PartyTaxScheme->CompanyID;
-                $row = $row . $sep   . $dt;
-                $row = $row .   $sep . $data->Order->ID . $sep.$sep.$sep.$sep ;//. PHP_EOL;
-                $row = $row .$sep.'"[CedentePrestatore|RiferimentoAmministrazione|'.
-                $data->Order->BuyerCustomerParty->Party->EndpointID."]".$sep;
-                $row = $row . '[DatiOrdineAcquisto|Data|'.$dt.']'.$sep;
-                $row = $row .'[DatiOrdineAcquisto|IdDocumento|'.   $data->Order->ID ; 
-                $row = $row .']"'.$sep; 
-                $row = $row . str_replace("CIG:", "",$data->Order->OriginatorDocumentReference->ID).$sep;
-                $row = $row . PHP_EOL;
-                //   echo '<tr><td>' . $row . '</tr></td>';
-                foreach ($data->Order->OrderLine as $line) {
-
-                    $row = $row . "RIG" . $sep   . $dt . $sep.$ind.$sep.$sep.$sep.$sep;
-                    $row = $row . $line->LineItem->Item->SellersItemIdentification->ID . $sep.$sep;
-                    $row = $row . $line->LineItem->Quantity;
-                    $row = $row . $sep . $this->withoutRounding($line->LineItem->Price->PriceAmount,3) .$sep. $sep;
-                    $row=$row.$line->Note.$sep.PHP_EOL;
-                }
-
-
-
-                $di = str_replace('include', '', $directory->getPath());
-                $xml = $di . $ini_array['percorsi']['toelab'] . (basename($f));
-                copy($xml, $di . $ini_array['percorsi']['procfiles'] . (basename($f)));
-                //     echo $row;
-                unlink($xml);
-                unlink("_" . basename($file));
-                return $row;
-            } catch (Exception $var) {
-                print $var->getMessage();
-            }
-        } else {
-
             $tmp_xml = file_get_contents($file); //fread(fopen($file,"r"),$file);
             // var_dump($testo);
             $tmp_file = fopen("_" . basename($file), "w");
@@ -317,7 +170,8 @@ class ls
             $tmp_xml = str_replace("ns8:", "", $tmp_xml);
             $tmp_xml = str_replace("ns9:", "", $tmp_xml);
 
-*/
+*/ 
+ 
 
             $ns = $ini_xml['NS']['name_space'];
             //var_dump($ns);
@@ -354,7 +208,7 @@ class ls
                 EndpointID."]".$sep;
                 $row = $row . '[DatiOrdineAcquisto|Data|'.$dt.']'.$sep;
                 $row = $row .'[DatiOrdineAcquisto|IdDocumento|'.   $data->Order->ID ; 
-                $row = $row .']"'.$sep;
+                $row = $row .']"'.$sep.$sep;
                 $row = $row . str_replace("CIG:", "",$data->Order->OriginatorDocumentReference->ID).$sep; 
                 $row = $row . PHP_EOL;
                 //   echo '<tr><td>' . $row . '</tr></td>';
@@ -364,7 +218,8 @@ class ls
                     $row = $row . $line->LineItem->Item->SellersItemIdentification->ID . $sep.$sep;
                     $row = $row . $line->LineItem->Quantity;
                     $row = $row . $sep . $this->withoutRounding($line->LineItem->Price->PriceAmount,3) .$sep.$sep;
-                    $row=$row.$line->Note.$sep. PHP_EOL;
+                    $row=$row.$line->LineItem->Item->Name.' '.$line->Note.$sep;
+                    $row=$row.$this->withoutRounding($line->LineItem->LineExtensionAmount,3) .$sep. PHP_EOL;
                 }
 
 
@@ -380,13 +235,8 @@ class ls
                 //  print $var->getMessage();
                 echo "<B>il File {$f}  potrebbe non essere CORRETTO!!!!</B><br><B>Non presenta al'interno i dati relativi a un ordine</B><br><BR>";
             }
-        }
+        
     }
-
-
-
-
-
 
     function creafile($rows)
     {
