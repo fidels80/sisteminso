@@ -9,10 +9,10 @@ $p = new ProgressBar();
 
 $eleb = ($ls->elefile(1));
 $eleb2 = ($ls->elefile(2));
-var_dump($eleb);
-var_dump($eleb2);
+//var_dump($eleb);
+//var_dump($eleb2);
 $elef = (array_diff($eleb, $eleb2));
-print_r($elef);
+//print_r($elef);
 $f = 0;
 $i = 0;
 $size = 100;
