@@ -47,7 +47,9 @@ class ls
         if ($dir == 1) {
             $lpath = glob($di . $ini_array['percorsi']['toelab'] . '*.' . $search, GLOB_BRACE);
             foreach ($lpath as $f) {
-                array_push($res, basename($f));
+                if (!file_exists($di . $ini_array['percorsi']['procfiles'] . (basename($f)))) {
+                    array_push($res, basename($f));
+                }
             }
         } else {
             $lpath = glob($di . $ini_array['percorsi']['procfiles'] . '*.' . $search, GLOB_BRACE);
