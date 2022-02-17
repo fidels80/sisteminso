@@ -1,6 +1,6 @@
 <?php
-include('.\include\ls.php');
-include('.\include\pb.php');
+include __DIR__ . '/include/ls.php';
+include __DIR__ . '/include/PB.php';
 $ini_array = parse_ini_file("config.ini", true /* will scope sectionally */);
 $ls = new ls();
 $ls->localelab();
