@@ -9,11 +9,11 @@ class ls
 
     //    include __DIR__ . '/include/ls.php';
     //    include __DIR__ . '/include/PB.php';
-
+//str_replace("ns8:", "", $tmp_xml);
         $ini_array = parse_ini_file("config.ini", true /* will scope sectionally */);
         $ext = $ini_array['Parametri']['estensione'];
        // echo  str_replace('include','',__DIR__).$ini_array['percorsi']['oripath'];
-         echo  (__DIR__ );
+         echo  (str_replace('include','',__DIR__) );
         if (!is_dir(  str_replace('include','',__DIR__).$ini_array['percorsi']['oripath'])) {
 
             echo "<H1>attenzione la directory di origine  non esiste controllare il config.ini voce oripath</h1>";
