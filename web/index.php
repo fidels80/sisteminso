@@ -1,8 +1,22 @@
-<?php session_start();
-
+<?php
+//session_start();
+//require_once __DIR__ . '/inc/flash.php';
 include __DIR__ . '/include/ls.php';
 include __DIR__ . '/include/PB.php';
-$ls= new ls();
+$ls = new ls();
+$ini_array = parse_ini_file("config.ini", true/* will scope sectionally */);
+$ext = $ini_array['Parametri']['estensione'];
+//$ext2=$ini_array['EXTENSION']['ext'];
+$ext2 = $ini_array['EXTENSION'];
+//var_dump($ext);
+$search = '';
+foreach ($ext2['ext'] as $value) {
+
+    //  echo $value . '<br>';
+    $search = $search . '.' . str_replace('.', '', '.' . $value) . ',';
+}
+$search = $search . '}';
+$search = str_replace(',}', '', $search);
 echo <<<EOT
 <style>
 /*the following html and body rule sets are required only if using a % width or height*/
@@ -140,16 +154,21 @@ body {
 </style>
 EOT;
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 </head>
 <body>
 
 
-<table style="height: 94px; margin-left: auto; margin-right: auto;" 
+<table style="height: 94px; margin-left: auto; margin-right: auto;"
 border="1" width="800" cellspacing="10" cellpadding="10">
 <tbody>
 <tr style="height: 116.188px;">
@@ -158,7 +177,7 @@ border="1" width="800" cellspacing="10" cellpadding="10">
 </td>
 
 <td style="width: 501px; height: 116.188px;" rowspan="6">
-<?php 
+<?php
 
 echo <<<EOT
 <div class="scrollingtable">
@@ -173,15 +192,15 @@ echo <<<EOT
 			</tr>
 		  </thead>
 		  <tbody>
-<tr><td> 
+<tr><td>
 EOT;
 
-$ris=($ls->elefile(1));
-foreach($ris as $r){
-echo '<tr><td>'.$r.'</td></tr>';
+$ris = ($ls->elefile(1));
+foreach ($ris as $r) {
+    echo '<tr><td>' . $r . '</td></tr>';
 }
-echo 
-<<<EOT
+echo
+    <<<EOT
 </td></tbody></table>
 </div>
 </div>
@@ -193,17 +212,23 @@ EOT;
 </tr>
 <tr style="height: 116.188px;">
 
-<td style="width: 301px; height: 116.188px;">Seleziona file da caricare   
+<td style="width: 301px; height: 116.188px;">Seleziona files da caricare
   <form enctype="multipart/form-data" action="upload.php" method="post">
         <div>
-           
-            <input type="file" id="file" name="file" accept="text/xml"/>
-        </div>
+<?php
+echo
+    <<<EOT
+ <input type="file" id="file" name="file[]" multiple accept="{$search}" />
+EOT;
+
+$rr = "accept='.{$ext}";
+?>
+          </div>
         <div>
             <button type="submit">Upload</button>
         </div>
     </form>
- 
+
 </tr>
 <tr style="height: 18px;">
 <td style="width: 301px; height: 18px;">&nbsp;</td>
@@ -217,7 +242,8 @@ EOT;
 <tr style="height: 39px;">
 <td style="width: 301px; height: 39px;"><br />
 <form enctype="multipart/form-data" action="elab.php" method="post">
-<input name="submit" type="submit" value="Elaborazione Locale" 
+
+<input name="submit" type="submit" value="Elaborazione Locale"
 />
 </form></td>
 </tr>
@@ -226,3 +252,31 @@ EOT;
 <p><br /><br /></p>
 </body>
 </html>
+
+<?php
+/*
+require('../vendor/autoload.php');
+$app = new Silex\Application();
+$app['debug'] = true;
+// Register the monolog logging service
+$app->register(new Silex\Provider\MonologServiceProvider(), array(
+'monolog.logfile' => 'php://stderr',
+));
+// Register view rendering
+$app->register(new Silex\Provider\TwigServiceProvider(), array(
+'twig.path' => __DIR__.'/views',
+));
+// Our web handlers
+$app->get('/', function() use($app) {
+$app['monolog']->addDebug('logging output.');
+return $app['twig']->render('index.twig');
+});
+
+$app->get('/cowsay', function() use($app) {
+$app['monolog']->addDebug('cowsay');
+return "<pre>".\Cowsayphp\Cow::say("Cool beans")."</pre>";
+});
+
+$app->run();
+ */
+?>
