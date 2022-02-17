@@ -39,8 +39,8 @@ echo $tmpFilePath.'<br>';
 
 
 if ($chk==0){
-//header("Location: ./index.php"); 
-//ob_end_flush();
+header("Location: ./index.php"); 
+ob_end_flush();
 }
 else
 {
