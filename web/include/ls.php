@@ -6,13 +6,27 @@ class ls
     public $ini_array = array();
     function elefile($dir)
     {
+
+    //    include __DIR__ . '/include/ls.php';
+    //    include __DIR__ . '/include/PB.php';
+
         $ini_array = parse_ini_file("config.ini", true /* will scope sectionally */);
         $ext = $ini_array['Parametri']['estensione'];
-        if (!is_dir($ini_array['percorsi']['oripath'])) {
-            echo "<H1>attenzione la directory di origine gli nso non esiste controllare il config.ini voce oripath</h1>";
+       // echo  str_replace('include','',__DIR__).$ini_array['percorsi']['oripath'];
+       // echo str_replace(__DIR__,'include','');
+        if (!is_dir(  str_replace('include','',__DIR__).$ini_array['percorsi']['oripath'])) {
+            echo "<H1>attenzione la directory di origine  non esiste controllare il config.ini voce oripath</h1>";
         }
         //var_dump($ini_array);
-        $oripath = glob($ini_array['percorsi']['oripath'] . $ext);
+        $ext = $ini_array['EXTENSION'];
+        $search = '{';
+        foreach ($ext['ext'] as $value) {
+            $search = $search  . str_replace('.', '', $value) . ',';
+        }
+        $search = $search . '}';
+        $search = str_replace(',}', '}', $search);
+        $oripath = glob('.\\' . $ini_array['percorsi']['oripath'] . '*.' . $search, GLOB_BRACE);
+        // glob($ini_array['percorsi']['oripath'] . $ext);
         //var_dump($oripath);
         //var_dump($ini_array['percorsi']['oripath']);
         $directory = new DirectoryIterator(dirname(__FILE__));
@@ -25,28 +39,23 @@ class ls
             } else {
             }
         }
-
-
-
         $res = [];
         if ($dir == 1) {
-            $lpath = glob($di . $ini_array['percorsi']['toelab'] . $ext);
+            $lpath = glob($di . $ini_array['percorsi']['toelab'] . '*.' . $search, GLOB_BRACE);
             foreach ($lpath as $f) {
                 array_push($res, basename($f));
             }
         } else {
-            $lpath = glob($di . $ini_array['percorsi']['procfiles'] . $ext);
+            $lpath = glob($di . $ini_array['percorsi']['procfiles'] . '*.' . $search, GLOB_BRACE);
 
             foreach ($lpath as $f) {
                 array_push($res, basename($f));
             }
         }
 
-
-        return $res;
+ 
+        return array_unique($res);
     }
-
-
 
 
     function localelab()
@@ -373,23 +382,11 @@ class ls
 
 
 
-
     function creafile($rows)
     {
-    $ini_array = parse_ini_file("config.ini", true /* will scope sectionally */);
-        $web= glob($ini_array['percorsi']['output'] .'/*.csv');
- 
-        foreach ($web as $f) {
-          echo  "rimosso file {$f}<br>";
-        $this->reset($f);
-           }
-    
-    
-    $ini_array = parse_ini_file("config.ini", true /* will scope sectionally */);
+        $ini_array = parse_ini_file("config.ini", true /* will scope sectionally */);
 
-        $nfile = $ini_array['percorsi']['output'] . $ini_array['Parametri']['NomeOut'] . 
-        //date('m-d-Y_hia') . 
-        '.csv';
+        $nfile = $ini_array['percorsi']['output'] . $ini_array['Parametri']['NomeOut'] . date('m-d-Y_hia') . '.csv';
         $tmpfile = fopen($nfile, "w")
             or   $this->extremesave($rows);
         /*die("NON POSSO CREARE IL FILE DI OUTPUT!! COntrollare cartella e permessi!! "
