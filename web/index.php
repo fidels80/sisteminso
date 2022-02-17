@@ -1,7 +1,7 @@
 <?php session_start();
-require_once __DIR__ . '/inc/flash.php';
-include('.\include\ls.php');
-include('.\include\pb.php');
+
+include __DIR__ . '/include/ls.php';
+include __DIR__ . '/include/PB.php';
 $ls= new ls();
 echo <<<EOT
 <style>
