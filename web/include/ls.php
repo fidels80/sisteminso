@@ -14,8 +14,9 @@ class ls
         $ext = $ini_array['Parametri']['estensione'];
        // echo  str_replace('include','',__DIR__).$ini_array['percorsi']['oripath'];
       //   echo  (str_replace('include','',__DIR__).$ini_array['percorsi']['oripath']);
-        if (!is_dir('/app/web/toelab/') 
-        //|| !is_dir(str_replace('include','',__DIR__).$ini_array['percorsi']['oripath'])
+        if (//!is_dir('/app/web/toelab/') 
+        //|| 
+        !is_dir(str_replace('include', '', __DIR__).$ini_array['percorsi']['oripath'])
         ) {
 
             echo "<H1>attenzione la directory di origine  non esiste controllare il config.ini voce oripath</h1>";
@@ -388,8 +389,10 @@ class ls
     function creafile($rows)
     {
         $ini_array = parse_ini_file("config.ini", true /* will scope sectionally */);
-
-        $nfile = $ini_array['percorsi']['output'] . $ini_array['Parametri']['NomeOut']  . '.csv';
+        $di=str_replace('include', '', __DIR__);
+     //  echo $di.'<br>';
+      //  echo $di.  $ini_array['Parametri']['NomeOut']  . '.csv';
+        $nfile =$di . $ini_array['Parametri']['NomeOut']  . '.csv';
         $tmpfile = fopen($nfile, "w")
             or   $this->extremesave($rows);
         /*die("NON POSSO CREARE IL FILE DI OUTPUT!! COntrollare cartella e permessi!! "
@@ -397,7 +400,7 @@ class ls
 );*/
         fwrite($tmpfile, $rows);
         fclose($tmpfile);
-        $webf = fopen($ini_array['Parametri']['NomeOut'] . date('m-d-Y_hia') . '.csv', "w") or
+        $webf = fopen($di.$ini_array['Parametri']['NomeOut'] . date('m-d-Y_hia') . '.csv', "w") or
             $this->extremesave($rows);
         fwrite($webf, $rows);
 
@@ -411,7 +414,7 @@ class ls
     function extremesave($row)
     {
 
-        fwrite("c:\nso_" . date('m-d-Y_hia') . '.csv', $row);
+        fwrite("nso_" . date('m-d-Y_hia') . '.csv', $row);
         die("NON POSSO CREARE IL FILE DI OUTPUT  !! COntrollare cartella e permessi!! ");
     }
 
