@@ -33,7 +33,7 @@ class ls
         //var_dump($oripath);
         //var_dump($ini_array['percorsi']['oripath']);
         $directory = new DirectoryIterator(dirname(__FILE__));
-        $di = str_replace('include', '', $directory->getPath());
+        $di = str_replace('include', '', __DIR__);
 
 
         foreach ($oripath as $f) {
@@ -389,7 +389,7 @@ class ls
     {
         $ini_array = parse_ini_file("config.ini", true /* will scope sectionally */);
 
-        $nfile = $ini_array['percorsi']['output'] . $ini_array['Parametri']['NomeOut'] . date('m-d-Y_hia') . '.csv';
+        $nfile = $ini_array['percorsi']['output'] . $ini_array['Parametri']['NomeOut']  . '.csv';
         $tmpfile = fopen($nfile, "w")
             or   $this->extremesave($rows);
         /*die("NON POSSO CREARE IL FILE DI OUTPUT!! COntrollare cartella e permessi!! "
